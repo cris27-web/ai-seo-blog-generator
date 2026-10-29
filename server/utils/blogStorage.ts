@@ -50,4 +50,27 @@ export async function saveBlog(
 
 export async function getBlog(slug: string): Promise<SavedBlog | null> {
   return blogStore().get(slug, { type: 'json' })
+
+  
+
+}
+
+export async function listBlogs() {
+  const store = blogStore()
+  const { blobs } = await store.list()
+
+  const blogs = await Promise.all(
+    blobs.map((blob) => getBlog(blob.key)),
+  )
+
+  return blogs
+    .filter((blog): blog is SavedBlog => blog !== null)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .map((blog) => ({
+      slug: blog.slug,
+      title: blog.copy.title,
+      description: blog.copy.metaDescription,
+      companyCount: blog.statistics.companyCount,
+      createdAt: blog.createdAt,
+    }))
 }

@@ -13,12 +13,14 @@ https://ai-seo-blog-generator.netlify.app
 - A UK fintech page using the supplied 100-company dataset.
 - CSV upload with a user-supplied industry or topic.
 - Server-side CSV validation using Papa Parse.
+- Automatic recognition of common equivalent CSV headers, regardless of column order.
 - Funding totals and averages calculated in code.
 - Structured article generation using Google Gemini.
 - Persistent article storage using Netlify Blobs.
 - Reusable blog pages with article-specific SEO metadata.
 - Homepage links to generated articles.
-- Responsive tables, labelled inputs and status/error messages.
+- A shared visual theme and navigation, labelled inputs and status/error messages.
+- Scrollable company tables with sticky column headings and company names.
 
 ## Technology
 
@@ -66,11 +68,22 @@ The supplied example CSV is available at
 
 Uploads must be under 1 MB and contain no more than 1,000 companies.
 
-Required column names:
+Required fields (the original column names are shown below):
 
 ```text
 Rank,Company,Region,Stage,Employees,Total Raised,Description,Website,Industries
 ```
+
+Common equivalent headers are recognised automatically, ignoring case,
+spaces and punctuation. For example, `Organisation` and `Business Name`
+map to `Company`, `Headcount` maps to `Employees`, and `Total Funding GBP`
+maps to `Total Raised`. Column order does not matter.
+
+All nine fields remain required. Duplicate or equivalent columns are
+rejected rather than silently choosing one. Unrecognised required fields
+produce an error; the parser does not infer arbitrary column meanings.
+Revenue is not treated as fundraising, and header recognition does not
+convert currencies.
 
 Funding values must be GBP amounts, for example `£30,314,247`.
 Values containing commas must be quoted according to CSV conventions.
@@ -92,7 +105,7 @@ CSV and topic
     → /blog/[slug]
 ```
 
-- `shared/utils/companies.ts`: CSV parsing, validation and statistics.
+- `shared/utils/companies.ts`: header recognition, CSV parsing, validation and statistics.
 - `shared/types/blog.ts`: shared article types.
 - `server/utils/generateBlogCopy.ts`: prompt, API call and output validation.
 - `server/utils/blogStorage.ts`: saving, retrieval and article summaries.
@@ -102,6 +115,10 @@ CSV and topic
 - `app/pages/upload.vue`: upload interface.
 - `app/pages/blog/[slug].vue`: reusable article template.
 - `app/pages/blog/uk-fintech.vue`: supplied fintech dataset page.
+- `app/components/FundingStatistics.vue`: shared funding-statistics cards.
+- `app/components/CompanyTable.vue`: shared table with sticky headings and company names.
+- `app/components/SiteHeader.vue`: shared navigation.
+- `app/assets/css/main.css`: shared theme and article styles.
 
 Statistics are calculated directly from the CSV rather than delegated
 to the language model. AI-generated text is rendered as text rather
@@ -138,6 +155,14 @@ Environment variable changes require a new deployment.
 - Generated pages checked for server-rendered content and 100 table rows.
 - Article titles, meta descriptions and funding totals checked.
 - Homepage checked for links to saved production articles.
+- A fictional 30-company cleantech dataset tested with GBP 465,000,000
+  total funding and GBP 15,500,000 average funding.
+- Parser checks confirmed that renamed and reordered headers produce
+  identical records to the original dataset.
+- Parser checks confirmed rejection of duplicate aliases, revenue used
+  as funding, a USD funding heading and dollar-prefixed funding values.
+- A renamed-header cleantech CSV successfully generated an article locally.
+- Manual phone checks covered responsive layouts and sticky table navigation.
 
 These checks do not constitute a full automated test suite or a
 complete accessibility audit.
@@ -147,7 +172,9 @@ complete accessibility audit.
 - Gemini can return inaccurate or unsupported prose despite prompt
   constraints and structural validation. Editorial review is needed.
 - Free-tier quotas and provider availability can interrupt generation.
-- Uploads require the supplied column format and GBP funding values.
+- Uploads require all nine company fields, using supported headings or
+  aliases, and GBP funding values. Arbitrary-schema mapping and other
+  currencies are not supported.
 - Generation is public, without authentication or application-level
   rate limiting.
 - A repeated submission may create another article.
@@ -164,5 +191,5 @@ AI assistance was used for implementation guidance, code examples,
 debugging and discussion of alternatives. Generated code was reviewed
 and exercised through local and deployed checks.
 
-The accompanying technical reflection describes the development
-process and remaining limitations.
+The assessment also requires a separate technical reflection PDF covering
+the development process, decisions, learning and remaining limitations.

@@ -147,7 +147,10 @@ async function generate() {
 
       <aside class="guidance" aria-labelledby="guidance-heading">
         <h2 id="guidance-heading">Prepare your dataset</h2>
-        <p>Your CSV needs these column names:</p>
+    <p>
+  Your CSV must contain the following fields. Common equivalent
+  headings are recognised automatically, regardless of column order.
+</p>
 
         <ul class="column-list">
           <li>Rank</li>
@@ -160,6 +163,13 @@ async function generate() {
           <li>Website</li>
           <li>Industries</li>
         </ul>
+       
+        <p>
+  For example, Business Name can identify the company,
+  Headcount can identify employees, and Total Funding GBP
+  can identify fundraising. Ambiguous or unrecognised required
+  fields will produce an error.
+</p>
 
         <p>
           Quote values containing commas, such as

@@ -11,6 +11,87 @@ export type CompanyRow = {
   Website: string
   Industries: string
 }
+function normaliseHeader(header: string): string {
+  return header
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+}
+
+const headerAliases: Record<keyof CompanyRow, string[]> = {
+  Rank: [
+    'Ranking',
+    'Position',
+  ],
+  Company: [
+    'Company Name',
+    'Business Name',
+    'Organisation',
+    'Organization',
+    'Organisation Name',
+    'Organization Name',
+  ],
+  Region: [
+    'Location',
+    'Headquarters',
+    'HQ Location',
+  ],
+  Stage: [
+    'Funding Stage',
+    'Investment Stage',
+    'Company Stage',
+  ],
+  Employees: [
+    'Employee Count',
+    'Number of Employees',
+    'Headcount',
+    'Team Size',
+  ],
+  'Total Raised': [
+    'Total Funding',
+    'Total Funding GBP',
+    'Total Raised GBP',
+    'Funding Raised',
+    'Amount Raised',
+    'Total Fundraising',
+  ],
+  Description: [
+    'Company Description',
+    'Business Description',
+    'Business Summary',
+    'Summary',
+    'Overview',
+  ],
+  Website: [
+    'Website URL',
+    'Company Website',
+    'Web Address',
+    'URL',
+  ],
+  Industries: [
+    'Industry',
+    'Sector',
+    'Sectors',
+  ],
+}
+
+function resolveHeader(header: string): string {
+  const normalised = normaliseHeader(header)
+
+  for (const [field, aliases] of Object.entries(headerAliases)) {
+    const candidates = [field, ...aliases]
+
+    if (
+      candidates.some(
+        (candidate) => normaliseHeader(candidate) === normalised,
+      )
+    ) {
+      return field
+    }
+  }
+
+  return header.trim()
+}
 
 function parseFunding(value: string, company: string): number {
   const cleaned = value.replace(/[£,\s]/g, '')
@@ -32,12 +113,22 @@ export function parseCompanies(csv: string): CompanyRow[] {
   const result = Papa.parse<CompanyRow>(csv, {
     header: true,
     skipEmptyLines: 'greedy',
-    transformHeader: (header) => header.trim(),
+    transformHeader: resolveHeader,
   })
 
   if (result.errors.length > 0) {
     throw new Error('The company CSV could not be parsed.')
   }
+
+  if (
+  result.meta.renamedHeaders &&
+  Object.keys(result.meta.renamedHeaders).length > 0
+) {
+  throw new Error(
+    'Some CSV columns have duplicate or equivalent names. ' +
+    'Keep only one column for each company field.',
+  )
+}
 
   const requiredColumns = [
     'Rank',
@@ -56,9 +147,12 @@ export function parseCompanies(csv: string): CompanyRow[] {
     (column) => !headers.includes(column),
   )
 
-  if (missingColumns.length > 0) {
-    throw new Error(`Missing columns: ${missingColumns.join(', ')}`)
-  }
+ if (missingColumns.length > 0) {
+  throw new Error(
+    `Could not identify these columns: ${missingColumns.join(', ')}. ` +
+    'Use the example CSV or rename equivalent columns.',
+  )
+}
 
   if (result.data.length === 0) {
     throw new Error('The CSV must contain at least one company.')

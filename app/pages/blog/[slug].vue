@@ -31,7 +31,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <main v-if="blog">
+  <main v-if="blog" class="site-container article-page">
     <nav aria-label="Breadcrumb">
       <NuxtLink to="/">Home</NuxtLink>
       <span aria-hidden="true"> / </span>
@@ -65,51 +65,3 @@ useSeoMeta({
     </article>
   </main>
 </template>
-
-<style scoped>
-main {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px;
-  font-family: system-ui, sans-serif;
-  line-height: 1.7;
-  color: #172033;
-}
-
-header,
-section {
-  margin-block: 32px;
-}
-
-h1 {
-  max-width: 850px;
-  font-size: clamp(2rem, 5vw, 3.25rem);
-  line-height: 1.15;
-}
-
-h2 {
-  line-height: 1.3;
-}
-
-p {
-  max-width: 80ch;
-}
-
-a {
-  color: #1749a3;
-}
-
-.eyebrow {
-  font-weight: 700;
-  color: #1749a3;
-}
-
-.introduction {
-  font-size: 1.125rem;
-}
-
-.note {
-  color: #475569;
-  font-size: 0.9rem;
-}
-</style>

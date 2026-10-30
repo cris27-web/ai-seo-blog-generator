@@ -60,9 +60,10 @@ h2 {
 }
 
 .statistics > div {
-  padding: 20px;
-  background: #f1f5f9;
-  border-radius: 8px;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
 }
 
 dt {
@@ -78,7 +79,7 @@ dd {
 
 .note {
   max-width: 80ch;
-  color: #475569;
+  color: var(--color-muted);
   font-size: 0.9rem;
 }
 </style>

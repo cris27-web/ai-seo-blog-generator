@@ -45,11 +45,12 @@ useSeoMeta({
 </script>
 
 <template>
-  <main>
+  <main class="site-container article-page">
     <NuxtLink to="/">Back to home</NuxtLink>
 
     <article>
       <header>
+        <p class="eyebrow">Featured analysis</p>
         <h1>Top 100 UK Fintech Companies by Total Fundraising</h1>
 
         <p>
@@ -133,37 +134,3 @@ useSeoMeta({
     </article>
   </main>
 </template>
-
-<style scoped>
-main {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px;
-  font-family: system-ui, sans-serif;
-  line-height: 1.7;
-  color: #172033;
-}
-
-h1 {
-  max-width: 850px;
-  font-size: clamp(2rem, 5vw, 3.25rem);
-  line-height: 1.15;
-}
-
-p {
-  max-width: 80ch;
-}
-
-a {
-  color: #1749a3;
-}
-
-header,
-section {
-  margin-block: 32px;
-}
-
-h2 {
-  line-height: 1.3;
-}
-</style>

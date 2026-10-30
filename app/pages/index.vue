@@ -9,103 +9,314 @@ const { data: blogs, error } = await useFetch('/api/blogs')
 </script>
 
 <template>
-  <main>
-    <header>
-      <h1>Company Insights</h1>
-      <p>
-        Explore company rankings and funding insights,
-        or turn a company dataset into a new article.
+  <main class="site-container homepage">
+    <header class="hero">
+      <p class="eyebrow">Company data, explained</p>
+
+      <h1>Explore the companies behind the numbers.</h1>
+
+      <p class="hero-description">
+        Discover company rankings and funding insights, or turn your
+        own dataset into an article with calculated statistics and
+        AI-generated commentary.
       </p>
 
-      <NuxtLink to="/upload">Generate a blog from a CSV</NuxtLink>
+      <div class="hero-actions">
+        <NuxtLink to="/upload" class="button button-primary">
+          Generate an article
+        </NuxtLink>
+
+        <NuxtLink to="/blog/uk-fintech" class="button button-secondary">
+          Explore the fintech example
+        </NuxtLink>
+      </div>
+
+      <p class="hero-note">
+        Upload a compatible CSV. Generate copy. Explore the results.
+      </p>
     </header>
 
-    <section aria-labelledby="featured-heading">
-      <h2 id="featured-heading">Featured dataset</h2>
+    <section class="featured" aria-labelledby="featured-heading">
+      <div class="featured-copy">
+        <p class="eyebrow">Featured analysis</p>
+        <h2 id="featured-heading">
+          A closer look at UK fintech fundraising
+        </h2>
 
-      <NuxtLink to="/blog/uk-fintech">
-        Top 100 UK fintech companies by fundraising
-      </NuxtLink>
+        <p>
+          Explore 100 companies from the supplied dataset, with funding
+          totals, regional insights and a complete company ranking.
+        </p>
+
+        <NuxtLink to="/blog/uk-fintech" class="featured-link">
+          Read the fintech analysis
+          <span aria-hidden="true">→</span>
+        </NuxtLink>
+      </div>
+
+      <div class="featured-detail">
+        <span class="dataset-label">UK fintech dataset</span>
+        <strong>100</strong>
+        <span>companies to explore</span>
+        <span class="dataset-note">
+          Compare funding, location and business activities.
+        </span>
+      </div>
     </section>
 
-    <section aria-labelledby="articles-heading">
-      <h2 id="articles-heading">Generated articles</h2>
+    <section class="article-section" aria-labelledby="articles-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">From the datasets</p>
+          <h2 id="articles-heading">Generated articles</h2>
+        </div>
 
-      <p v-if="error" role="alert">
-        We couldn't load the article list. Please try again later.
+        <NuxtLink to="/upload">Create an article</NuxtLink>
+      </div>
+
+      <p v-if="error" role="alert" class="message">
+        We couldn't load the article list. Please refresh to try again.
       </p>
 
       <ul v-else-if="blogs?.length" class="articles">
         <li v-for="blog in blogs" :key="blog.slug">
-          <article>
+          <article class="article-card">
+            <p class="card-label">Dataset analysis</p>
+
             <h3>
               <NuxtLink :to="`/blog/${blog.slug}`">
                 {{ blog.title }}
               </NuxtLink>
             </h3>
 
-            <p>{{ blog.description }}</p>
-            <p class="note">
+            <p class="card-description">{{ blog.description }}</p>
+
+            <p class="card-meta">
               {{ blog.companyCount }} companies in this dataset
             </p>
           </article>
         </li>
       </ul>
 
-      <p v-else>
-        No articles have been generated yet.
-        <NuxtLink to="/upload">Create the first one.</NuxtLink>
-      </p>
+      <div v-else class="message">
+        <h3>Your first article starts with a dataset.</h3>
+        <p>
+          Upload a compatible company CSV to generate an article
+          with funding statistics and a rankings table.
+        </p>
+        <NuxtLink to="/upload" class="button button-primary">
+          Upload a dataset
+        </NuxtLink>
+      </div>
     </section>
   </main>
 </template>
 
 <style scoped>
-main {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 24px;
-  font-family: system-ui, sans-serif;
-  line-height: 1.7;
-  color: #172033;
+.homepage {
+  padding-block: 56px 16px;
 }
 
-header,
-section {
-  margin-block: 32px;
+.hero {
+  max-width: 850px;
+  padding-block: 24px 64px;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  line-height: 1.2;
+  max-width: 800px;
+  margin: 0;
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
 }
 
-a {
-  color: #1749a3;
+.hero-description {
+  max-width: 65ch;
+  margin-block: 24px;
+  color: var(--color-muted);
+  font-size: 1.15rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hero-note {
+  margin-top: 20px;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.featured {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.featured-copy {
+  padding: clamp(24px, 4vw, 40px);
+}
+
+h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.featured-copy > p:not(.eyebrow) {
+  max-width: 60ch;
+  color: var(--color-muted);
+}
+
+.featured-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-weight: 700;
+}
+
+.featured-detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px;
+  background: var(--color-soft);
+}
+
+.dataset-label {
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--color-primary);
+}
+
+.featured-detail strong {
+  margin-top: 12px;
+  font-size: 4.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+}
+
+.dataset-note {
+  max-width: 30ch;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.article-section {
+  margin-top: 64px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.section-heading > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 650;
 }
 
 .articles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 24px;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.articles article {
+.article-card {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  box-sizing: border-box;
-  padding: 20px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.card-label {
+  margin: 0 0 16px;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-weight: 650;
 }
 
 h3 {
-  margin-top: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.35;
 }
 
-.note {
-  color: #475569;
-  font-size: 0.9rem;
+h3 a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+h3 a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.card-description {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.card-meta {
+  margin-top: auto;
+  margin-bottom: 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.message {
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+@media (max-width: 700px) {
+  .homepage {
+    padding-top: 24px;
+  }
+
+  .hero {
+    padding-bottom: 40px;
+  }
+
+  .featured {
+    grid-template-columns: 1fr;
+  }
+
+  .article-section {
+    margin-top: 40px;
+  }
 }
 </style>
